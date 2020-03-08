@@ -1,0 +1,100 @@
+Precede command with "sudo" to execute it as administrator rights
+
+List all running ports
+	netstat -lnpt
+
+To kill a process (The previous command will have the Process ID (PID))
+	kill <<PID>>
+	
+
+Make a script file executable
+	sudo chmod +x <<scriptfile>
+
+To execute script file
+	./<<scriptfile>>
+	
+
+Copy file from current location to another 
+	sudo cp <<file> <<destination>> 
+	e.g. sudo copy myscript.sh /usr/bin/
+	
+Restart the server
+	sudo shutdown -r now
+
+Define environment variables and scripts that you want run in .bashrc. You will find this at home dir of user. 
+It is important to export it after you define it so it will be available
+.bashrc
+e.g. to define "ENV_NAME" as "DEV", do the following
+	ENV_NAME=DEV
+	EXPORT ENV_NAME
+	
+New bash values are no available until the .bashrc is reloaded. This happens with a reboot. 
+But you can force a reload with the following:
+	source ~ ./bashrc
+	
+      
+         
+FIREWALL open ports
+	First open them in DigitalOcean through the control panel.
+	
+	The open the on the Server using ufw (user friendly firewall)
+	
+	e.g. sudo ufw allow from any to any port 48999 proto tcp      
+	sudo ufw allow port 48998/tcp
+	
+	
+systemctl
+	systemctl daemon-reload
+
+	systemctl enable [name.service]
+	
+	systemctl start [name.service]
+	systemctl stop [name.service]
+	systemctl restart [name.service]
+	systemctl reload [name.service]
+	systemctl status [name.service]
+	systemctl is-active [name.service]
+	systemctl list-units --type service --all	
+	
+For debugging (systemd strongly controls the environment and does not take values from the system environment). 
+To compare a manually running script with one running in systemsd
+Put "env" at the start of the bash script
+Put the following line in the [Service] section of the service file
+	StandardOutput=console	
+
+To view output from the  service run the following (in a different console):
+
+	tail -f /var/log/syslog
+	
+	or
+	
+	journalctl -f -u mystuff.service
+	
+	or
+	journalctl -ex -u mystuff.service
+	
+	
+	
+/////////////////////////////////////////////////////////////////////////////////////////////
+// Not using forever anymore in this project - just left them to remind me how it is used ///
+/////////////////////////////////////////////////////////////////////////////////////////////
+	
+forever command
+	forever start <<file>>
+	
+	<<file>> can be nodejs file e.g. app.js or script file e.g. run.sh
+	
+forever stopall
+	this will stop all forever instances running
+	
+forever list
+	list all running forever instances
+	
+forever stop <<ID>>
+	Stop the daemon SCRIPT by Id|Uid|Pid|Index|Script
+	
+It is recommended to run start with -o -l, & -e.
+    e.g. forever start -l forever.log -o out.log -e err.log app.js
+         forever stop app.js
+   
+	    
