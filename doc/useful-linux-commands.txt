@@ -5,8 +5,15 @@ List all running ports
 
 To kill a process (The previous command will have the Process ID (PID))
 	kill <<PID>>
-	
 
+This will tell you what port tomcat is running on
+	netstat -tap | grep -i -e tomcat -e java	
+	
+This will give you for a specific port
+	netstat -an | grep 8090	
+
+
+/// Script files ///////
 Make a script file executable
 	sudo chmod +x <<scriptfile>
 
@@ -42,6 +49,8 @@ FIREWALL open ports
 	e.g. sudo ufw allow from any to any port 48999 proto tcp      
 	sudo ufw allow port 48998/tcp
 	
+	Show firewall rules
+		ufw status
 	
 systemctl
 	systemctl daemon-reload
@@ -55,7 +64,7 @@ systemctl
 	systemctl status [name.service]
 	systemctl is-active [name.service]
 	systemctl list-units --type service --all	
-	
+
 For debugging (systemd strongly controls the environment and does not take values from the system environment). 
 To compare a manually running script with one running in systemsd
 Put "env" at the start of the bash script
@@ -73,7 +82,10 @@ To view output from the  service run the following (in a different console):
 	or
 	journalctl -ex -u mystuff.service
 	
-	
+Handy for checking logs (Print last 100 lines of a file
+
+	tail -100 <filename>
+		
 	
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Not using forever anymore in this project - just left them to remind me how it is used ///

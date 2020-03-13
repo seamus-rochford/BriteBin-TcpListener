@@ -43,6 +43,17 @@ public class ListenerThread extends Thread {
     		log.debug("Recieved from client (numbers): " + inStr); 
     		
     		UnitMessage unitMsg = unitServices.saveUnitReading(result);
+    		// BriteBin message must be xx length long
+    		
+    		// *************************************************************************************
+    		// WARNING the length has not been checked
+    		// *************************************************************************************
+    		
+    		if (result.length == 16) {
+    			unitMsg = unitServices.saveUnitReading(result);
+    		} else {
+    			throw new Exception("Tekelek messages must be 140 bytes");
+    		}
     		
     		// echoing back to client
     		if (unitMsg.replyMessage) {

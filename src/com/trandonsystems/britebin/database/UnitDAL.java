@@ -13,6 +13,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.trandonsystems.britebin.model.UnitMessage;
 import com.trandonsystems.britebin.model.UnitReading;
+import com.trandonsystems.britebin.model.Unit;
+import com.trandonsystems.britebin.database.UtilDAL;
 
 public class UnitDAL {
 
@@ -51,7 +53,7 @@ public class UnitDAL {
 		return id;
 	}
 
-	public static UnitMessage saveReading(long rawDataId, UnitReading reading) throws SQLException {
+	public static UnitMessage saveReading(long rawDataId, long unitId, UnitReading reading) throws SQLException {
 
 		log.info("UnitDAL.saveReading(rawDataId, reading)");
 		try {
@@ -62,7 +64,7 @@ public class UnitDAL {
 
 		UnitMessage unitMsg = new UnitMessage();
 		
-		String spCall = "{ call SaveReading(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+		String spCall = "{ call SaveReading(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
 		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
@@ -90,9 +92,14 @@ public class UnitDAL {
 			spStmt.setInt(17, reading.serviceDoorOpen ? 1 : 0);
 			spStmt.setInt(18, reading.flapStuckOpen ? 1 : 0);
 			spStmt.setInt(19, reading.nbIoTSignalStrength);
+			spStmt.setInt(20, reading.rssi);
+			spStmt.setInt(21, reading.src);
+			spStmt.setInt(22, reading.snr);
+			spStmt.setInt(23, reading.ber);
+
 			// Convert java.time.Instant to java.sql.timestamp
 			Timestamp ts = Timestamp.from(reading.readingDateTime);
-		    spStmt.setTimestamp(20, ts);
+		    spStmt.setTimestamp(24, ts);
 		    
 		    spStmt.executeQuery();
 
@@ -102,10 +109,8 @@ public class UnitDAL {
 		}
 		
 		return unitMsg;
-		
 	}
 	
-
 	public static UnitMessage getUnitMsg(Connection conn, String serialNo) throws SQLException {
 		log.info("UnitDAL.getUnit(conn, serialNo)");
 		try {
@@ -162,5 +167,36 @@ public class UnitDAL {
 		}
 	}
 
-	
+	public static Unit getUnitBySerialNo(String serialNo) {
+		log.info("UnitDAL.get(id)");
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+		} catch (Exception ex) {
+			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
+		}
+
+		String spCall = "{ call GetUnitBySerialNo(?) }";
+		log.info("SP Call: " + spCall);
+		
+		Unit unit = new Unit();
+		
+		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+				CallableStatement spStmt = conn.prepareCall(spCall)) {
+
+			spStmt.setString(1, serialNo);
+			ResultSet rs = spStmt.executeQuery();
+
+			unit.serialNo = serialNo;
+			if (rs.next()) {
+				unit.id = rs.getInt("id");
+				unit.name = rs.getString("name");
+			}
+
+		} catch (SQLException ex) {
+			log.error(ex.getMessage());
+		}
+
+		return unit;
+	}
+
 }

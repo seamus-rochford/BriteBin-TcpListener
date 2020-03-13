@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.trandonsystems.britebin.database.UnitDAL;
 import com.trandonsystems.britebin.model.UnitMessage;
 import com.trandonsystems.britebin.model.UnitReading;
+import com.trandonsystems.britebin.model.Unit;
 
 public class UnitServices {
 
@@ -57,11 +58,13 @@ public class UnitServices {
 			for (int i = 0; i < idSize; i++) {
 				reading.serialNo += Hex.ByteToHex(data[13 + i]);
 			}
-			reading.readingDateTime = Instant.now();
+	        Unit unit = UnitDAL.getUnitBySerialNo(reading.serialNo);
+
+	        reading.readingDateTime = Instant.now();
 			
 			log.info(reading);
 			
-			unitMsg = UnitDAL.saveReading(rawDataId, reading);
+			unitMsg = UnitDAL.saveReading(rawDataId, unit.id, reading);
 			
 			break;
 			

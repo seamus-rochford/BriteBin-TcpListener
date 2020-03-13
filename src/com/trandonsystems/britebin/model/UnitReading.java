@@ -31,6 +31,11 @@ public class UnitReading {
 	public boolean serviceDoorOpen;
 	public boolean flapStuckOpen;
 
+	public int rssi;
+	public int src;
+	public int snr;
+	public int ber;
+	
 	public Instant readingDateTime;
 		
 }
