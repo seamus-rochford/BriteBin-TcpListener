@@ -1,4 +1,4 @@
-package com.trandonsystesm.test;
+package com.trandonsystems.test;
 
 import com.trandonsystems.britebin.model.UnitMessage;
 import com.trandonsystems.britebin.services.UnitServices;
@@ -36,23 +36,25 @@ public class Test {
 //				(byte)0x00,
 //				(byte)0x00, 
 //				(byte)0x00};
+		// msg: 01284800554466345A760000
+		// msg: 0180171000631A070800000004009E51F1
 		byte[] data = {(byte)0x01, // Message Type
-				(byte)0x28, // Bin Level
-				(byte)0x48, // Bin Level BC
-				(byte)0x00, // Flap openings 
-				(byte)0x55,  
-				(byte)0x44, // Battery Voltage
-				(byte)0x66, // Temp.
-				(byte)0x34, // NoCompactions
-				(byte)0x5A, // Flags All set
-				(byte)0x76, // Signal Strengths
+				(byte)0x80, // Bin Level
+				(byte)0x17, // Bin Level BC
+				(byte)0x10, // Flap openings 
+				(byte)0x00,  
+				(byte)0x63, // Battery Voltage
+				(byte)0x1A, // Temp.
+				(byte)0x07, // NoCompactions
+				(byte)0x08, // Flags 
+				(byte)0x00, // Signal Strengths
 				(byte)0x00, 
 				(byte)0x00, 
 				(byte)0x04, // Serial No length
-				(byte)0xac, // Serial Number
-				(byte)0x2b, 
-				(byte)0xe7, 
-				(byte)0xb6, 
+				(byte)0x00, // Serial Number
+				(byte)0x9E, 
+				(byte)0x51, 
+				(byte)0xF1, 
 				(byte)0x00, 
 				(byte)0x00, 
 				(byte)0x00, 

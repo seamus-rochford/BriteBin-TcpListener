@@ -189,7 +189,7 @@ public class UnitDAL {
 			unit.serialNo = serialNo;
 			if (rs.next()) {
 				unit.id = rs.getInt("id");
-				unit.name = rs.getString("name");
+				unit.location = rs.getString("location");
 			}
 
 		} catch (SQLException ex) {

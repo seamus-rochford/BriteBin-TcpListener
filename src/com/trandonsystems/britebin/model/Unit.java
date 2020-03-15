@@ -4,6 +4,6 @@ public class Unit {
 
 	public int id;
 	public String serialNo;
-	public String name;
+	public String location;
 		
 }

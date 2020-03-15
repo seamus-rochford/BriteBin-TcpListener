@@ -28,7 +28,7 @@ public class UnitServices {
 		case 1:
 			reading.binLevelBC = data[1] & 0xff;
 			reading.binLevel = data[2] & 0xff;
-			reading.noFlapOpening = (data[3] & 0xff) * 255 + (data[4] & 0xff);
+			reading.noFlapOpening = (data[3] & 0xff) * 256 + (data[4] & 0xff);
 			reading.batteryVoltage = data[5] & 0xff;
 			reading.temperature = data[6];   // signed value
 			reading.noCompactions = data[7] & 0xff;
@@ -46,7 +46,7 @@ public class UnitServices {
 			int signalStrength = data[9] & 0xff;
 			reading.nbIoTSignalStrength = signalStrength >> 4;
 			
-			int idSize = data[12];
+			int idSize = data[12]; // note this is hex length
 			
 			if (data.length > 30) {
 				// BriteBin Tcp Messages are 30 bytes or less

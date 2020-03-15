@@ -6,12 +6,15 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.trandonsystems.britebin.model.UnitMessage;
 import com.trandonsystems.britebin.services.UnitServices;
 
 public class ListenerThread extends Thread {
 
 	static Logger log = Logger.getLogger(ListenerThread.class);
+	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private Socket socket;
     UnitServices unitServices = new UnitServices();
     
@@ -42,22 +45,12 @@ public class ListenerThread extends Thread {
     		String inStr = Arrays.toString(result);
     		log.debug("Recieved from client (numbers): " + inStr); 
     		
+    		// DO NOT check for msg length here save raw-data first and then check
     		UnitMessage unitMsg = unitServices.saveUnitReading(result);
-    		// BriteBin message must be xx length long
-    		
-    		// *************************************************************************************
-    		// WARNING the length has not been checked
-    		// *************************************************************************************
-    		
-    		if (result.length == 16) {
-    			unitMsg = unitServices.saveUnitReading(result);
-    		} else {
-    			throw new Exception("Tekelek messages must be 140 bytes");
-    		}
     		
     		// echoing back to client
     		if (unitMsg.replyMessage) {
-    			output.write(unitMsg.message);
+    			log.debug("Message for unit: " + unitMsg.message);
     			unitServices.markMessageAsSent(unitMsg);
     			log.debug("Message set to unitId: " + unitMsg.unitId + " messageId: " + unitMsg.messageId + "   Message (bytes): " + unitMsg.message + "    Message(numbers): " + Arrays.toString(unitMsg.message));
     		}
