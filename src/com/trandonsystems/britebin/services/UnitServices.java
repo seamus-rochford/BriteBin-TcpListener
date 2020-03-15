@@ -46,7 +46,7 @@ public class UnitServices {
 			int signalStrength = data[9] & 0xff;
 			reading.nbIoTSignalStrength = signalStrength >> 4;
 			
-			int idSize = data[12]; // note this is hex length
+			int idSize = data[12]; // note this is byte length
 			
 			if (data.length > 30) {
 				// BriteBin Tcp Messages are 30 bytes or less
