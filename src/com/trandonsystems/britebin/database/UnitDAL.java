@@ -92,9 +92,9 @@ public class UnitDAL {
 			spStmt.setInt(17, reading.serviceDoorOpen ? 1 : 0);
 			spStmt.setInt(18, reading.flapStuckOpen ? 1 : 0);
 			spStmt.setInt(19, reading.nbIoTSignalStrength);
-			spStmt.setInt(20, reading.rssi);
+			spStmt.setDouble(20, reading.rssi);
 			spStmt.setInt(21, reading.src);
-			spStmt.setInt(22, reading.snr);
+			spStmt.setDouble(22, reading.snr);
 			spStmt.setInt(23, reading.ber);
 
 			// Convert java.time.Instant to java.sql.timestamp

@@ -48,9 +48,10 @@ public class ListenerThread extends Thread {
     		// DO NOT check for msg length here save raw-data first and then check
     		UnitMessage unitMsg = unitServices.saveUnitReading(result);
     		
-    		// echoing back to client
+    		// send message back to client
     		if (unitMsg.replyMessage) {
-    			log.debug("Message for unit: " + unitMsg.message);
+    			// send message back to unit - the write causes the send to happen
+    			output.write(unitMsg.message);
     			unitServices.markMessageAsSent(unitMsg);
     			log.debug("Message set to unitId: " + unitMsg.unitId + " messageId: " + unitMsg.messageId + "   Message (bytes): " + unitMsg.message + "    Message(numbers): " + Arrays.toString(unitMsg.message));
     		}

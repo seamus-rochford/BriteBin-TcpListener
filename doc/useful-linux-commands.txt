@@ -37,7 +37,7 @@ e.g. to define "ENV_NAME" as "DEV", do the following
 	
 New bash values are no available until the .bashrc is reloaded. This happens with a reboot. 
 But you can force a reload with the following:
-	source ~ ./bashrc
+	source ~ /.bashrc
 	
       
          
