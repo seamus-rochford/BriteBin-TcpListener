@@ -58,7 +58,7 @@ public class UnitServices {
 			for (int i = 0; i < idSize; i++) {
 				reading.serialNo += Hex.ByteToHex(data[13 + i]);
 			}
-	        Unit unit = UnitDAL.getUnitBySerialNo(reading.serialNo);
+	        Unit unit = UnitDAL.getUnitBySerialNo(1, reading.serialNo);
 
 	        reading.readingDateTime = Instant.now();
 			
