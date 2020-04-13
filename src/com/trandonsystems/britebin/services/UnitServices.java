@@ -34,17 +34,21 @@ public class UnitServices {
 			reading.noCompactions = data[7] & 0xff;
 			
 			int flags = data[8] & 0xff;
-			reading.batteryUVLO = ((flags & 0x80) == 0x80);
-			reading.binEmptiedLastPeriod = ((flags & 0x40) == 0x40);
-			reading.overUnderTempLO = ((flags & 0x20) == 0x20);
-			reading.binLocked = ((flags & 0x10) == 0x10);
-			reading.binFull = ((flags & 0x08) == 0x08);
-			reading.binTilted = ((flags & 0x04) == 0x04);
-			reading.serviceDoorOpen = ((flags & 0x02) == 0x02);
-			reading.flapStuckOpen = ((flags & 0x01) == 0x01);
+			reading.batteryUVLO = ((flags & 0x01) == 0x01);
+			reading.binEmptiedLastPeriod = ((flags & 0x02) == 0x02);
+			reading.batteryOverTempLO = ((flags & 0x04) == 0x04);
+			reading.binLocked = ((flags & 0x08) == 0x08);
+			reading.binFull = ((flags & 0x10) == 0x10);
+			reading.binTilted = ((flags & 0x20) == 0x20);
+			reading.serviceDoorOpen = ((flags & 0x40) == 0x40);
+			reading.flapStuckOpen = ((flags & 0x80) == 0x80);
 			
 			int signalStrength = data[9] & 0xff;
 			reading.nbIoTSignalStrength = signalStrength >> 4;
+			
+			// These come in as unsigned and i need to formulate them
+			reading.rsrq = -19.5 + 0.5 * (data[10] & 0xff);   
+			reading.rsrp = -140 + (data[11] & 0xff);
 			
 			int idSize = data[12]; // note this is byte length
 			

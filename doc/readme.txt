@@ -22,8 +22,23 @@ These services are enabled - they start on system reboot and restart after a fai
 To deploy a new version of a listener service
 1. Stop the service
 	systemctl stop <service-name>
-2. Copy the file onto teh server
-3. 
+2. Copy the file onto the server
+3. Start the service
+	systemctl start <service-name>
+4. Enable the service (so it restarts on boot)
+	systemctl enable <service-name>
+5. Reload all dependencies
+	systemctl daemon-reload
+4. Check if service is running
+	systemctl list-units --type service --all
+
+
+////////////////////////////////////////////
+/////// LOG FILES /////////////////////////
+///////////////////////////////////////////
+Note: log files for both listeners can be found in /apps/britebin/listeners/logs
+
+
 
 ////////////////////////////////////////
 // OLD WAY - I could NOT get working ///
