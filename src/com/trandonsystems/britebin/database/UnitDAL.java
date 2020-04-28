@@ -17,6 +17,8 @@ import com.trandonsystems.britebin.model.Unit;
 
 public class UnitDAL {
 
+	static final String SOURCE = "NB IoT - BriteBin Sensor";
+	
 	static Logger log = Logger.getLogger(UnitDAL.class);
 	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -30,7 +32,7 @@ public class UnitDAL {
 			throw new SQLException("ERROR: Can't create instance of driver" + ex.getMessage());
 		}
 
-		String spCall = "{ call SaveRawData(?) }";
+		String spCall = "{ call SaveRawReadings(?, ?) }";
 		log.info("SP Call: " + spCall);
 
 		long id = 0;
@@ -38,6 +40,7 @@ public class UnitDAL {
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			spStmt.setBytes(1, data);
+			spStmt.setString(2, SOURCE);
 			ResultSet rs = spStmt.executeQuery();
 			
 			if (rs.next()) {
