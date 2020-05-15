@@ -17,7 +17,7 @@ import com.trandonsystems.britebin.model.Unit;
 
 public class UnitDAL {
 
-	static final String SOURCE = "NB IoT - BriteBin Sensor";
+	static final String SOURCE = "NB-IoT BB";
 	
 	static Logger log = Logger.getLogger(UnitDAL.class);
 	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -66,7 +66,7 @@ public class UnitDAL {
 
 		UnitMessage unitMsg = new UnitMessage();
 		
-		String spCall = "{ call SaveReadingNBIoT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+		String spCall = "{ call SaveReadingNBIoT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
 		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
@@ -105,7 +105,9 @@ public class UnitDAL {
 			Timestamp ts = Timestamp.from(reading.readingDateTime);
 		    spStmt.setTimestamp(26, ts);
 		    
-		    spStmt.executeQuery();
+			spStmt.setString(27, SOURCE);
+
+			spStmt.executeQuery();
 
 		} catch (SQLException ex) {
 			log.error("UnitDAL.saveReading: " + ex.getMessage());

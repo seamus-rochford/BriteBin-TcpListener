@@ -62,6 +62,15 @@ public class UnitServices {
 			for (int i = 0; i < idSize; i++) {
 				reading.serialNo += Hex.ByteToHex(data[13 + i]);
 			}
+			
+			log.debug("SerialNo (before): " + reading.serialNo);
+			// Remove leading zero's from serialNo
+			int i = 0;
+			while (reading.serialNo.charAt(i) == '0' && i < reading.serialNo.length() - 1)
+			    i++;
+			reading.serialNo = reading.serialNo.substring(i).toUpperCase();
+			log.debug("SerialNo (after): " + reading.serialNo);
+			
 	        Unit unit = UnitDAL.getUnitBySerialNo(1, reading.serialNo);
 
 	        reading.readingDateTime = Instant.now();
