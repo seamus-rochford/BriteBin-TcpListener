@@ -22,7 +22,10 @@ public class BriteBinTcpListener {
 		log.info("Port : " + port);
 		
 		UtilDAL.envName = System.getenv("ENV_NAME");
+//		UtilDAL.envName = "PROD";
 		log.info("ENV_NAME: " + UtilDAL.envName);
+		
+		UtilDAL.setConn();
 		
         try (ServerSocket serverSocket = new ServerSocket(port)) {
         	 

@@ -13,6 +13,10 @@ There are 2 bash script files for running these listener
 	runBriteBin.sh
 	runTekelek.sh
 	
+Don't forget to make these executable
+	chmod +x filename.sh
+
+	
 There are 2 services defined in /etc/systemd/system
 	britebin-listener.service
 	tekelek-listener.service
@@ -61,4 +65,4 @@ To make sure the Listeners start after a server re-boot, we can add them to the 
 		@reboot forever start -l britebin_forever.log -o britebin_out.log -e britebin_err.log ~/apps/BriteBin/runBriteBinListener.sh
 		@reboot forever start -l tekelek_forever.log -o tekelek_out.log -e tekelek_err.log ~/apps/BriteBin/runTekelekListener.sh
 		
-Check where it puts the logs - it may no put them at the root
+Check where cd /apps

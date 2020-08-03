@@ -25,4 +25,21 @@ public class UtilDAL {
 			break;
 		}
 	}
+	
+	public static void setConn() {
+		if(envName == null)
+			envName = "";
+		switch (envName) {
+		case "PROD":
+			connUrl = "jdbc:mysql://localhost:3306/britebin?serverTimezone=UTC";
+			username = "admin";
+			password = "admin123";
+			break;
+		default:
+			connUrl = "jdbc:mysql://localhost:3306/britebin?serverTimezone=UTC";
+			username = "admin";
+			password = "Rebel123456#.";
+			break;
+		}
+	}
 }
