@@ -23,6 +23,10 @@ public class UnitServices {
 		UnitReading reading = new UnitReading();
 
 		reading.msgType = data[0] & 0xff;
+		
+		// Helper variables
+		int idSize;
+		Unit unit;
 
 		switch (reading.msgType) {
 		case 1:
@@ -50,7 +54,7 @@ public class UnitServices {
 			reading.rsrq = -19.5 + 0.5 * (data[10] & 0xff);   
 			reading.rsrp = -140 + (data[11] & 0xff);
 			
-			int idSize = data[12]; // note this is byte length
+			idSize = data[12]; // note this is byte length
 			
 			if (data.length > 30) {
 				// BriteBin Tcp Messages are 30 bytes or less
@@ -71,16 +75,75 @@ public class UnitServices {
 			reading.serialNo = reading.serialNo.substring(i).toUpperCase();
 			log.debug("SerialNo (after): " + reading.serialNo);
 			
-	        Unit unit = UnitDAL.getUnitBySerialNo(1, reading.serialNo);
+	        unit = UnitDAL.getUnitBySerialNo(1, reading.serialNo);
+
+	        reading.readingDateTime = Instant.now();
+			
+	        // Set firmware parameters in the reading
+	        reading.firmware = unit.firmware;
+	        reading.binTime = unit.binTime;
+	        reading.binJustOn = unit.binJustOn;
+	        reading.regularPeriodicReporting = unit.regularPeriodicReporting;
+	        reading.nbiotSimIssue = unit.nbiotSimIssue;
+	        
+	        log.info(reading);
+			
+			unitMsg = UnitDAL.saveReading(rawDataId, unit.id, reading);
+			
+			break;
+		case 5:
+			String firmware = String.format("%02d", data[1] & 0xff);
+			firmware += "-" + String.format("%02d", data[2] & 0xff);
+			firmware += "-" + String.format("%02d", data[3] & 0xff);
+			firmware += " " + String.format("%02d", data[4] & 0xff);
+			firmware += ":" + String.format("%02d", data[5] & 0xff);
+			firmware += ":" + String.format("%02d", data[6] & 0xff);
+			
+			String binTime = String.format("%02d", data[7] & 0xff);
+			binTime += ":" + String.format("%02d", data[8] & 0xff);
+			binTime += ":" + String.format("%02d", data[9] & 0xff);
+
+			reading.firmware = firmware;
+			reading.binTime = binTime;
+
+			// flags
+			int flags5 = data[10] & 0xff;
+			reading.binJustOn = ((flags5 & 0x01) == 0x01);
+			reading.regularPeriodicReporting = ((flags5 & 0x02) == 0x02);
+			reading.nbiotSimIssue = ((flags5 & 0x04) == 0x04);  // irrelevent for NB-IoT because will not be received - only useful for Sigfox
+
+			// Byte 11 reserved - ignore
+			
+			idSize = data[12]; // note this is byte length
+			
+			if (data.length > 30) {
+				// BriteBin Tcp Messages are 30 bytes or less
+				throw new Exception("BriteBin messages are 30 bytes or less - this message is " + data.length + "bytes long");
+			} else if (data.length < (13 + idSize)) {
+				throw new Exception("There is not enough bytes in the message for a serialNo of size " + idSize + " bytes.");
+			}
+			reading.serialNo = "";
+			for (int j = 0; j < idSize; j++) {
+				reading.serialNo += Hex.ByteToHex(data[13 + j]);
+			}
+			
+			log.debug("SerialNo (before): " + reading.serialNo);
+			// Remove leading zero's from serialNo
+			int j = 0;
+			while (reading.serialNo.charAt(j) == '0' && j < reading.serialNo.length() - 1)
+			    j++;
+			reading.serialNo = reading.serialNo.substring(j).toUpperCase();
+			log.debug("SerialNo (after): " + reading.serialNo);
+			
+	        unit = UnitDAL.getUnitBySerialNo(1, reading.serialNo);
 
 	        reading.readingDateTime = Instant.now();
 			
 			log.info(reading);
 			
-			unitMsg = UnitDAL.saveReading(rawDataId, unit.id, reading);
+			unitMsg = UnitDAL.saveReadingFirmware(rawDataId, unit.id, reading);
 			
 			break;
-			
 		default:
 			throw new Exception("UnitServices.saveUnitReading: Unknown message type msgType: " + reading.msgType);
 		}

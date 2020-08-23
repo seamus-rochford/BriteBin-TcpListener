@@ -5,5 +5,14 @@ public class Unit {
 	public int id;
 	public String serialNo;
 	public String location;
-		
+
+	// firmware values
+	public String firmware;
+	public String binTime;
+	
+	// flags
+	public boolean binJustOn;
+	public boolean regularPeriodicReporting;
+	public boolean nbiotSimIssue;
+	
 }

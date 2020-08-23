@@ -6,6 +6,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import org.apache.log4j.Logger;
 
@@ -66,7 +69,7 @@ public class UnitDAL {
 
 		UnitMessage unitMsg = new UnitMessage();
 		
-		String spCall = "{ call SaveReadingNBIoT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+		String spCall = "{ call SaveReadingNBIoT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
 		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
@@ -106,6 +109,12 @@ public class UnitDAL {
 		    spStmt.setTimestamp(26, ts);
 		    
 			spStmt.setString(27, SOURCE);
+			
+			spStmt.setString(28, reading.firmware);
+			spStmt.setString(29, reading.binTime);
+			spStmt.setInt(30, reading.binJustOn ? 1 : 0);
+			spStmt.setInt(31, reading.regularPeriodicReporting ? 1 : 0);
+			spStmt.setInt(32, reading.nbiotSimIssue ? 1 : 0);
 
 			spStmt.executeQuery();
 
@@ -116,6 +125,48 @@ public class UnitDAL {
 		
 		return unitMsg;
 	}
+	
+	public static UnitMessage saveReadingFirmware(long rawDataId, long unitId, UnitReading reading) throws SQLException {
+
+		log.info("UnitDAL.saveReadingFirmware(rawDataId, unitId, reading)");
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+		} catch (Exception ex) {
+			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
+		}
+
+		UnitMessage unitMsg = new UnitMessage();
+		
+		String spCall = "{ call saveReadingFirmware(?, ?, ?, ?, ?, ?, ?, ?) }";
+		log.debug("SP Call: " + spCall);
+
+		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+				CallableStatement spStmt = conn.prepareCall(spCall)) {
+
+			unitMsg = getUnitMsg(conn, reading.serialNo);
+			log.debug("unitMsg: " + gson.toJson(unitMsg));		
+
+			spStmt.setLong(1, unitId);
+			spStmt.setLong(2, rawDataId);
+			spStmt.setString(3, reading.firmware);
+			spStmt.setString(4, reading.binTime);
+			spStmt.setInt(5, reading.binJustOn ? 1 : 0);
+			spStmt.setInt(6, reading.regularPeriodicReporting ? 1 : 0);
+			spStmt.setInt(7, reading.nbiotSimIssue ? 1 : 0);
+			spStmt.setString(8, SOURCE);
+
+			spStmt.executeQuery();
+
+		} catch (SQLException ex) {
+			log.error("UnitDAL.saveReadingFirmware: " + ex.getMessage());
+			throw ex;
+		}
+		
+		log.info("UnitDAL.saveReadingFirmware(rawDataId, unitId, reading) - end");
+
+		return unitMsg;
+	}
+	
 	
 	public static UnitMessage getUnitMsg(Connection conn, String serialNo) throws SQLException {
 		log.info("UnitDAL.getUnit(conn, serialNo)");
@@ -146,6 +197,28 @@ public class UnitDAL {
 			throw ex;
 		}
 
+		int msgType = unitMsg.message[0] & 0xff;
+		if (msgType == 4) {
+			// Here we want to set the time of the device, so we have to get the current date and time just before we send the message
+			
+			// Get the current UTC Date/Time to set for the unit
+			
+			// Get UTC Date/Time
+			LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+			
+			byte[] msg = new byte[8];
+			msg[0] = (byte)msgType;
+			msg[1] = (byte)(now.getYear() % 100);  // Get 2 digit year part
+			msg[2] = (byte)now.getMonthValue();
+			msg[3] = (byte)now.getDayOfMonth();
+			msg[4] = (byte)now.getHour();
+			msg[5] = (byte)now.getMinute();
+			msg[6] = (byte)now.getSecond();
+			msg[7] = unitMsg.message[7];
+			
+			unitMsg.message = msg;
+		}
+		
 		return unitMsg;
 	}
 	
@@ -197,6 +270,13 @@ public class UnitDAL {
 			if (rs.next()) {
 				unit.id = rs.getInt("id");
 				unit.location = rs.getString("location");
+			
+				// firmware values
+				unit.firmware = rs.getString("units.firmware");
+				unit.binTime = rs.getString("units.bintime");
+				unit.binJustOn = (rs.getInt("units.binJustOn") == 1);
+				unit.regularPeriodicReporting = (rs.getInt("units.regularPeriodicReporting") == 1);
+				unit.nbiotSimIssue = (rs.getInt("units.nbiotIssue") == 1);
 			}
 
 		} catch (SQLException ex) {

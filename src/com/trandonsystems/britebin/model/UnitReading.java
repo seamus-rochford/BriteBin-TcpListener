@@ -11,6 +11,7 @@ public class UnitReading {
 	// data
 	public int msgType;
 	
+	// These are message type 1 values
 	public int binLevel;		// unsigned
 	public int binLevelBC;		// unsigned
 	public int noFlapOpening;	// unsigned
@@ -37,6 +38,16 @@ public class UnitReading {
 	public int ber;
 	public double rsrq;	// Reference Signal Received Quality
 	public int rsrp; 	// Reference Signal Received Power
+	
+	
+	// These are message type 5 values
+	public String firmware;
+	public String binTime;
+	
+	// flags
+	public boolean binJustOn;
+	public boolean regularPeriodicReporting;
+	public boolean nbiotSimIssue;
 	
 	public Instant readingDateTime;
 		
