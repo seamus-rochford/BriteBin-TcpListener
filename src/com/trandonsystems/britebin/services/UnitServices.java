@@ -2,6 +2,7 @@ package com.trandonsystems.britebin.services;
 
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.ZoneOffset;
 
 import org.apache.log4j.Logger;
 
@@ -81,7 +82,7 @@ public class UnitServices {
 			
 	        // Set firmware parameters in the reading
 	        reading.firmware = unit.firmware;
-	        reading.binTime = unit.binTime;
+	        reading.timeDiff = unit.timeDiff;
 	        reading.binJustOn = unit.binJustOn;
 	        reading.regularPeriodicReporting = unit.regularPeriodicReporting;
 	        reading.nbiotSimIssue = unit.nbiotSimIssue;
@@ -99,12 +100,26 @@ public class UnitServices {
 			firmware += ":" + String.format("%02d", data[5] & 0xff);
 			firmware += ":" + String.format("%02d", data[6] & 0xff);
 			
-			String binTime = String.format("%02d", data[7] & 0xff);
-			binTime += ":" + String.format("%02d", data[8] & 0xff);
-			binTime += ":" + String.format("%02d", data[9] & 0xff);
-
 			reading.firmware = firmware;
-			reading.binTime = binTime;
+
+			try {
+				int hour = Integer.parseInt(String.format("%02d", data[7] & 0xff));
+				int minute = Integer.parseInt(String.format("%02d", data[8] & 0xff));
+				int second = Integer.parseInt(String.format("%02d", data[9] & 0xff));
+
+				Instant now = Instant.now();
+				Instant unitTime = now.atZone(ZoneOffset.UTC)
+											.withHour(hour)
+											.withMinute(minute)
+											.withSecond(second)
+											.toInstant();
+				long timeDiff = unitTime.getEpochSecond() - now.getEpochSecond();
+			
+				reading.timeDiff = timeDiff;
+			} catch (Exception ex) {
+				log.error("ERROR: Message Type = 5: Converting device time to valid time failed " + ex.getMessage());
+				reading.timeDiff = 0;
+			}
 
 			// flags
 			int flags5 = data[10] & 0xff;

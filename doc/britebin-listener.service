@@ -16,7 +16,7 @@ WorkingDirectory=/apps/britebin/listeners
 #executable is a bash script which calls jar file
 ExecStart=/apps/britebin/listeners/runBriteBin.sh
 
-SucessExitStatus=143
+SuccessExitStatus=143
 TimeoutStopSec=10
 Restart=on-failure
 RestartSec=5s

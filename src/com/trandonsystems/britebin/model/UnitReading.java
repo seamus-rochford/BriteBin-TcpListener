@@ -42,7 +42,7 @@ public class UnitReading {
 	
 	// These are message type 5 values
 	public String firmware;
-	public String binTime;
+	public long timeDiff;
 	
 	// flags
 	public boolean binJustOn;

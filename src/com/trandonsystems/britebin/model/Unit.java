@@ -8,7 +8,7 @@ public class Unit {
 
 	// firmware values
 	public String firmware;
-	public String binTime;
+	public long timeDiff;
 	
 	// flags
 	public boolean binJustOn;

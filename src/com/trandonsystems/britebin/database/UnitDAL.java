@@ -111,7 +111,7 @@ public class UnitDAL {
 			spStmt.setString(27, SOURCE);
 			
 			spStmt.setString(28, reading.firmware);
-			spStmt.setString(29, reading.binTime);
+			spStmt.setLong(29, reading.timeDiff);
 			spStmt.setInt(30, reading.binJustOn ? 1 : 0);
 			spStmt.setInt(31, reading.regularPeriodicReporting ? 1 : 0);
 			spStmt.setInt(32, reading.nbiotSimIssue ? 1 : 0);
@@ -149,7 +149,7 @@ public class UnitDAL {
 			spStmt.setLong(1, unitId);
 			spStmt.setLong(2, rawDataId);
 			spStmt.setString(3, reading.firmware);
-			spStmt.setString(4, reading.binTime);
+			spStmt.setLong(4, reading.timeDiff);
 			spStmt.setInt(5, reading.binJustOn ? 1 : 0);
 			spStmt.setInt(6, reading.regularPeriodicReporting ? 1 : 0);
 			spStmt.setInt(7, reading.nbiotSimIssue ? 1 : 0);
@@ -197,26 +197,28 @@ public class UnitDAL {
 			throw ex;
 		}
 
-		int msgType = unitMsg.message[0] & 0xff;
-		if (msgType == 4) {
-			// Here we want to set the time of the device, so we have to get the current date and time just before we send the message
-			
-			// Get the current UTC Date/Time to set for the unit
-			
-			// Get UTC Date/Time
-			LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
-			
-			byte[] msg = new byte[8];
-			msg[0] = (byte)msgType;
-			msg[1] = (byte)(now.getYear() % 100);  // Get 2 digit year part
-			msg[2] = (byte)now.getMonthValue();
-			msg[3] = (byte)now.getDayOfMonth();
-			msg[4] = (byte)now.getHour();
-			msg[5] = (byte)now.getMinute();
-			msg[6] = (byte)now.getSecond();
-			msg[7] = unitMsg.message[7];
-			
-			unitMsg.message = msg;
+		if (unitMsg.message != null) {
+			int msgType = unitMsg.message[0] & 0xff;
+			if (msgType == 4) {
+				// Here we want to set the time of the device, so we have to get the current date and time just before we send the message
+				
+				// Get the current UTC Date/Time to set for the unit
+				
+				// Get UTC Date/Time
+				LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
+				
+				byte[] msg = new byte[8];
+				msg[0] = (byte)msgType;
+				msg[1] = (byte)(now.getYear() % 100);  // Get 2 digit year part
+				msg[2] = (byte)now.getMonthValue();
+				msg[3] = (byte)now.getDayOfMonth();
+				msg[4] = (byte)now.getHour();
+				msg[5] = (byte)now.getMinute();
+				msg[6] = (byte)now.getSecond();
+				msg[7] = unitMsg.message[7];
+				
+				unitMsg.message = msg;
+			}
 		}
 		
 		return unitMsg;
@@ -273,7 +275,7 @@ public class UnitDAL {
 			
 				// firmware values
 				unit.firmware = rs.getString("units.firmware");
-				unit.binTime = rs.getString("units.bintime");
+				unit.timeDiff = rs.getLong("units.timeDiff");
 				unit.binJustOn = (rs.getInt("units.binJustOn") == 1);
 				unit.regularPeriodicReporting = (rs.getInt("units.regularPeriodicReporting") == 1);
 				unit.nbiotSimIssue = (rs.getInt("units.nbiotIssue") == 1);

@@ -24,6 +24,9 @@ There are 2 services defined in /etc/systemd/system
 These services are enabled - they start on system reboot and restart after a failure
 
 To deploy a new version of a listener service
+
+0. cd /etc/systemd/system
+
 1. Stop the service
 	systemctl stop <service-name>
 2. Copy the file onto the server
