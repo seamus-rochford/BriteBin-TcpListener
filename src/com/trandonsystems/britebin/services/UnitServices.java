@@ -45,11 +45,15 @@ public class UnitServices {
 			reading.binLocked = ((flags & 0x08) == 0x08);
 			reading.binFull = ((flags & 0x10) == 0x10);
 			reading.binTilted = ((flags & 0x20) == 0x20);
-			reading.serviceDoorOpen = ((flags & 0x40) == 0x40);
+			reading.serviceDoorClosed = ((flags & 0x40) == 0x40);
 			reading.flapStuckOpen = ((flags & 0x80) == 0x80);
 			
-			int signalStrength = data[9] & 0xff;
-			reading.nbIoTSignalStrength = signalStrength >> 4;
+			flags = data[9] & 0xff;
+			reading.serviceDoorOpen = ((flags & 0x01) == 0x01);
+			
+//			int signalStrength = data[9] & 0xff;
+//			reading.nbIoTSignalStrength = signalStrength >> 4;
+			reading.nbIoTSignalStrength = 0;
 			
 			// These come in as unsigned and i need to formulate them
 			reading.rsrq = -19.5 + 0.5 * (data[10] & 0xff);   

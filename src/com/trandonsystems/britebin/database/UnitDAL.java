@@ -96,7 +96,7 @@ public class UnitDAL {
 			spStmt.setInt(16, reading.binTilted ? 1 : 0);
 			spStmt.setInt(17, reading.serviceDoorOpen ? 1 : 0);
 			spStmt.setInt(18, reading.flapStuckOpen ? 1 : 0);
-			spStmt.setInt(19, reading.nbIoTSignalStrength);
+			spStmt.setInt(19, reading.serviceDoorClosed ? 1 : 0);
 			spStmt.setDouble(20, reading.rssi);
 			spStmt.setInt(21, reading.src);
 			spStmt.setDouble(22, reading.snr);

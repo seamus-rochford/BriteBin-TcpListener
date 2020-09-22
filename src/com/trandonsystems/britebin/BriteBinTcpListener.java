@@ -32,7 +32,8 @@ public class BriteBinTcpListener {
             log.info("Server is listening on port " + port);
  
             while (true) {
-                Socket socket = serverSocket.accept();
+
+            	Socket socket = serverSocket.accept();
                 log.info("New client connected");
  
                 new ListenerThread(socket).start();
