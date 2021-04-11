@@ -51,6 +51,8 @@ public class UnitReading {
 	public boolean regularPeriodicReporting;
 	public boolean nbiotSimIssue;
 	
+	public int hardwareRevision;
+	
 	public Instant readingDateTime;
 		
 }

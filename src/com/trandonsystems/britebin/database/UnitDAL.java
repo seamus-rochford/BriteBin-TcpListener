@@ -137,7 +137,7 @@ public class UnitDAL {
 
 		UnitMessage unitMsg = new UnitMessage();
 		
-		String spCall = "{ call saveReadingFirmware(?, ?, ?, ?, ?, ?, ?, ?) }";
+		String spCall = "{ call saveReadingFirmware(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
 		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
@@ -153,7 +153,8 @@ public class UnitDAL {
 			spStmt.setInt(5, reading.binJustOn ? 1 : 0);
 			spStmt.setInt(6, reading.regularPeriodicReporting ? 1 : 0);
 			spStmt.setInt(7, reading.nbiotSimIssue ? 1 : 0);
-			spStmt.setString(8, SOURCE);
+			spStmt.setInt(8,  reading.hardwareRevision);
+			spStmt.setString(9, SOURCE);
 
 			spStmt.executeQuery();
 
@@ -169,7 +170,7 @@ public class UnitDAL {
 	
 	
 	public static UnitMessage getUnitMsg(Connection conn, String serialNo) throws SQLException {
-		log.info("UnitDAL.getUnit(conn, serialNo)");
+		log.info("UnitDAL.getUnitMsg(conn, serialNo)");
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
 		} catch (Exception ex) {

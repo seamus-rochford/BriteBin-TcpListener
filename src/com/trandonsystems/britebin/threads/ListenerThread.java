@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.trandonsystems.britebin.model.UnitMessage;
 import com.trandonsystems.britebin.services.UnitServices;
+import com.trandonsystems.britebin.services.Hex;
 
 public class ListenerThread extends Thread {
 
@@ -42,8 +43,7 @@ public class ListenerThread extends Thread {
 //    			System.out.println(i + ":" + (result[i] & 0xFF));
 //    		}
     		log.debug("Recieved from client (bytes): " + result + " Byte Size: " + result.length); 
-    		String inStr = Arrays.toString(result);
-    		log.debug("Recieved from client (numbers): " + inStr); 
+    		log.debug("Recieved from client (Hex): " + Hex.ByteArrayToHex(result) + " Byte Size: " + result.length * 2); 
     		
     		// DO NOT check for msg length here save raw-data first and then check
     		UnitMessage unitMsg = unitServices.saveUnitReading(result);

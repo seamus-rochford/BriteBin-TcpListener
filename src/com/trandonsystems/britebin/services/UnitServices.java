@@ -105,6 +105,7 @@ public class UnitServices {
 			firmware += ":" + String.format("%02d", data[6] & 0xff);
 			
 			reading.firmware = firmware;
+			log.debug("Firmware: " + firmware);
 
 			try {
 				int hour = Integer.parseInt(String.format("%02d", data[7] & 0xff));
@@ -131,7 +132,8 @@ public class UnitServices {
 			reading.regularPeriodicReporting = ((flags5 & 0x02) == 0x02);
 			reading.nbiotSimIssue = ((flags5 & 0x04) == 0x04);  // irrelevent for NB-IoT because will not be received - only useful for Sigfox
 
-			// Byte 11 reserved - ignore
+			// Byte 11 - hardwareRevision
+			reading.hardwareRevision = data[11] & 0xff;
 			
 			idSize = data[12]; // note this is byte length
 			
