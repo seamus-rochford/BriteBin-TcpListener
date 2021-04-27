@@ -29,10 +29,10 @@ public class UnitReading {
 	public boolean binLocked;
 	public boolean binFull;
 	public boolean binTilted;
-	public boolean serviceDoorOpen;
 	public boolean flapStuckOpen;
 
-	public boolean serviceDoorClosed; // When this flag is set the binLevelBC is the level of the bin before emptying
+	public boolean serviceDoorClosed = false;   // This is set once after a service door stuck open
+	public boolean serviceDoorOpen = false;
 
 	public double rssi;  // Received Signal Strength Indicator
 	public int src;		 // Sonic Result Code - used by tekelek

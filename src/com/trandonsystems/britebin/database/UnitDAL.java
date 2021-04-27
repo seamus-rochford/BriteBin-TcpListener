@@ -69,7 +69,7 @@ public class UnitDAL {
 
 		UnitMessage unitMsg = new UnitMessage();
 		
-		String spCall = "{ call SaveReadingNBIoT(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
+		String spCall = "{ call SaveReadingNBIoT_V2(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
 		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
@@ -94,9 +94,9 @@ public class UnitDAL {
 			spStmt.setInt(14, reading.binLocked ? 1 : 0);
 			spStmt.setInt(15, reading.binFull ? 1 : 0);
 			spStmt.setInt(16, reading.binTilted ? 1 : 0);
-			spStmt.setInt(17, reading.serviceDoorOpen ? 1 : 0);
+			spStmt.setInt(17, reading.serviceDoorClosed ? 1 : 0);
 			spStmt.setInt(18, reading.flapStuckOpen ? 1 : 0);
-			spStmt.setInt(19, reading.serviceDoorClosed ? 1 : 0);
+			spStmt.setInt(19, reading.serviceDoorOpen ? 1 : 0);
 			spStmt.setDouble(20, reading.rssi);
 			spStmt.setInt(21, reading.src);
 			spStmt.setDouble(22, reading.snr);
