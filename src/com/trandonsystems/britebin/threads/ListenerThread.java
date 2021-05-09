@@ -29,6 +29,15 @@ public class ListenerThread extends Thread {
         	
         	// Takes input from the client socket
         	DataInputStream input = new DataInputStream(socket.getInputStream());
+        	// Check if anything in the input stream
+        	if (input.available() == 0) {
+        		// No data available
+        		log.error("Connection made but no data received");
+                socket.close();
+        		input.close();
+        		return;
+        	}
+        	
         	// Writes on client socket
         	DataOutputStream output = new DataOutputStream(socket.getOutputStream());
 

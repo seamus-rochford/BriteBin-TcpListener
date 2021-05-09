@@ -1,6 +1,7 @@
 package com.trandonsystems.britebin;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -35,6 +36,7 @@ public class BriteBinTcpListener {
 
             	Socket socket = serverSocket.accept();
                 log.info("New client connected");
+                log.info("Client Ip: " + ((InetSocketAddress)socket.getRemoteSocketAddress()).getAddress().toString());
  
                 new ListenerThread(socket).start();
             }
