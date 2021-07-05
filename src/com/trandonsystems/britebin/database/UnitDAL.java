@@ -2,7 +2,6 @@ package com.trandonsystems.britebin.database;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -28,18 +27,12 @@ public class UnitDAL {
 	public static long saveRawData(byte[] data) throws SQLException{
 
 		log.info("UnitDAL.saveRawData(data)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-			throw new SQLException("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
 
 		String spCall = "{ call SaveRawReadings(?, ?) }";
 		log.info("SP Call: " + spCall);
 
 		long id = 0;
-		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+		try (Connection conn = UtilDAL.getConnection();
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			spStmt.setBytes(1, data);
@@ -61,18 +54,13 @@ public class UnitDAL {
 	public static UnitMessage saveReading(long rawDataId, long unitId, UnitReading reading) throws SQLException {
 
 		log.info("UnitDAL.saveReading(rawDataId, reading)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
 
 		UnitMessage unitMsg = new UnitMessage();
 		
 		String spCall = "{ call SaveReadingNBIoT_V2(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
-		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+		try (Connection conn = UtilDAL.getConnection();
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			unitMsg = getUnitMsg(conn, reading.serialNo);
@@ -129,18 +117,13 @@ public class UnitDAL {
 	public static UnitMessage saveReadingFirmware(long rawDataId, long unitId, UnitReading reading) throws SQLException {
 
 		log.info("UnitDAL.saveReadingFirmware(rawDataId, unitId, reading)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
 
 		UnitMessage unitMsg = new UnitMessage();
 		
 		String spCall = "{ call saveReadingFirmware(?, ?, ?, ?, ?, ?, ?, ?, ?) }";
 		log.debug("SP Call: " + spCall);
 
-		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+		try (Connection conn = UtilDAL.getConnection();
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			unitMsg = getUnitMsg(conn, reading.serialNo);
@@ -171,11 +154,6 @@ public class UnitDAL {
 	
 	public static UnitMessage getUnitMsg(Connection conn, String serialNo) throws SQLException {
 		log.info("UnitDAL.getUnitMsg(conn, serialNo)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
  
 		log.debug("SerialNo: " + serialNo);
 		String spCall = "{ call GetUnitMessage(?) }";
@@ -228,16 +206,11 @@ public class UnitDAL {
 	public static void markMessageAsSent(UnitMessage unitMsg) throws SQLException{
 
 		log.info("UnitDAL.markMessageAsSent(unitMsg)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
 
 		String spCall = "{ call MarkMessageAsSent(?) }";
 		log.info("SP Call: " + spCall);
 
-		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+		try (Connection conn = UtilDAL.getConnection();
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			spStmt.setInt(1, unitMsg.messageId);
@@ -251,18 +224,13 @@ public class UnitDAL {
 
 	public static Unit getUnitBySerialNo(int filterUserId, String serialNo) {
 		log.info("UnitDAL.get(id)");
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-			log.error("ERROR: Can't create instance of driver" + ex.getMessage());
-		}
 
 		String spCall = "{ call GetUnitBySerialNo(?, ?) }";
 		log.info("SP Call: " + spCall);
 		
 		Unit unit = new Unit();
 		
-		try (Connection conn = DriverManager.getConnection(UtilDAL.connUrl, UtilDAL.username, UtilDAL.password);
+		try (Connection conn = UtilDAL.getConnection();
 				CallableStatement spStmt = conn.prepareCall(spCall)) {
 
 			spStmt.setInt(1,  filterUserId);

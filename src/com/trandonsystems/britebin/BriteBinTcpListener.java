@@ -7,7 +7,6 @@ import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import com.trandonsystems.britebin.database.UtilDAL;
 import com.trandonsystems.britebin.threads.ListenerThread;
 import com.trandonsystems.britebin.utils.Util;
 
@@ -22,11 +21,9 @@ public class BriteBinTcpListener {
 		int port = Util.britebinTcpPort;
 		log.info("Port : " + port);
 		
-		UtilDAL.envName = System.getenv("ENV_NAME");
+//		UtilDAL.envName = System.getenv("ENV_NAME");
 //		UtilDAL.envName = "PROD";
-		log.info("ENV_NAME: " + UtilDAL.envName);
-		
-		UtilDAL.setConn();
+//		log.info("ENV_NAME: " + UtilDAL.envName);
 		
         try (ServerSocket serverSocket = new ServerSocket(port)) {
         	 
